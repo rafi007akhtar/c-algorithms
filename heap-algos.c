@@ -3,13 +3,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// in-line functions
+#define left(i) (2*i + 1) // get the index of the left child of a node
+#define right(i) (2*i + 2) // get the index of the right child of a node
+#define parent(i) ((i - 1)/2) // get the index of the parent of a node
+
 // user-defined functions
 int* create_heap(int); // create a heap of specified size
-int left(int); // get the index of the left child of a node
-int right(int); // get the index of the right child of a node
-int parent(int); // get the index of the parent of a node
 void show_heap(int); // print a heap array
-void max_heapify(int,int); // max-heapify the heap
+void max_heapify(int,int); // max-heapify the heap using recursion
+void max_heapify_alter(int,int); // max-heapify the heap using loop
+void min_heapify(int,int); // min-heapify the heap using recursion
+void build_max_heap(int); // build the max-heap from bottom up
 
 int *h; // create a global heap variable
 
@@ -21,7 +26,7 @@ int main()
 	printf("Enter the size of the heap: ");
 	scanf("%d", &n);
 	h = create_heap(n);
-	printf("Heap created");
+	printf("Heap created\n");
 	
 	// enter elements in it
 	printf("\nEnter %d elements: ", n);
@@ -31,7 +36,7 @@ int main()
 	// enter the menu
 	while(1)
 	{
-		printf("\nEnter what you want\n1. See the heap \n2. Max-Heapify it \n-1. Exit \nEnter choice: ");
+		printf("\nEnter what you want\n1. See the heap \n2. Max-Heapify it \n3. Min-Heapify it \n4. Build the entire heap \n-1. Exit \nEnter choice: ");
 		scanf("%d", &ch);
 		if(ch == -1) break;
 		switch(ch)
@@ -41,11 +46,23 @@ int main()
 				show_heap(n);
 				break;
 			case 2: 
-				printf("Enter the position of i: ");
+				printf("Enter the position of i: "); // user assumes 1-indexed
 				scanf("%d", &i);
-				max_heapify(i, n);
+				max_heapify(--i, n);
 				printf("Heap changed\n");
 				break;
+			case 3:
+				printf("Enter the position of i: "); // user assumes 1-indexed
+				scanf("%d", &i);
+				min_heapify(--i, n);
+				printf("Heap changed\n");
+				break;
+			
+			case 4:
+				build_max_heap(n);
+				printf("Heap built\n");
+				break;
+				
 			default:
 				printf("Wrong choice. Try again\n");
 				break;
@@ -58,15 +75,6 @@ int main()
 int* create_heap(int n) 
 {
 	return (int *)malloc(n * sizeof(int));
-}
-
-int left(int i) {return 2*i + 1;}
-int right(int i) {return 2*i + 2;}
-int parent(int i) 
-{
-	float par = i/2;
-	if (par == (int)par) return (int)par;
-	return (int)par + 1;
 }
 
 void show_heap(int n)
@@ -97,3 +105,63 @@ void max_heapify(int i, int n)
 		max_heapify(max, n);
 	}
 }
+
+void max_heapify_alter(int i, int n)
+{
+	int l, r, max, temp;
+	while(1)
+	{
+		l = left(i);
+		r = right(i);
+		
+		// find the greatest b/w h[i] and its children h[l], h[r]
+		if (l <= n && h[l] > h[i])
+			max = l;
+		else max = i;
+		if (r <= n && h[r] > h[max])
+			max = r;
+		
+		// if max happens to be i itself, terminate
+		if (max == i) return;
+		
+		// otherwise, max-heapify away!
+		temp = h[i];
+		h[i] = h[max];
+		h[max] = temp;
+		
+		// check the subtree now
+		i = max;
+	}
+}
+
+void min_heapify(int i, int n)
+{
+	int l, r, min, temp;
+	
+	// compute the indices children - left and right - of the node at index i
+	l = left(i);
+	r = right(i);
+	
+	// find the smallest among these, and store its index in min
+	if (l < n && h[l] < h [i]) min = l;
+	else min = i;
+	if (r < n && h[r] < h[min]) min = r;
+	
+	// max-heapify away!
+	if (min != i)
+	{
+		temp = h[i];
+		h[i] = h[min];
+		h[min] = temp;
+		max_heapify(min, n);
+	}
+}
+
+void build_max_heap(int n)
+{
+	int i;
+	int non = (n-1)/2; // the index of the last non-leaf node
+	// loop over from this index up till the root, and apply the max-heapify process on each node
+	for(i = non; i >= 0; i--) max_heapify(i, n);
+}
+
