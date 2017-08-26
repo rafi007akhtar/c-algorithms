@@ -15,6 +15,7 @@ void max_heapify(int,int); // max-heapify the heap using recursion
 void max_heapify_alter(int,int); // max-heapify the heap using loop
 void min_heapify(int,int); // min-heapify the heap using recursion
 void build_max_heap(int); // build the max-heap from bottom up
+void heapsort(int); // apply the heapsort process to sort the array
 
 int *h; // create a global heap variable
 
@@ -36,7 +37,7 @@ int main()
 	// enter the menu
 	while(1)
 	{
-		printf("\nEnter what you want\n1. See the heap \n2. Max-Heapify it \n3. Min-Heapify it \n4. Build the entire heap \n-1. Exit \nEnter choice: ");
+		printf("\nEnter what you want\n1. See the heap \n2. Max-Heapify it \n3. Min-Heapify it \n4. Build the entire heap \n5. Apply heapsort on the array \n-1. Exit \nEnter choice: ");
 		scanf("%d", &ch);
 		if(ch == -1) break;
 		switch(ch)
@@ -61,6 +62,11 @@ int main()
 			case 4:
 				build_max_heap(n);
 				printf("Heap built\n");
+				break;
+				
+			case 5:
+				heapsort(n);
+				printf("Heap sorted\n");
 				break;
 				
 			default:
@@ -165,3 +171,20 @@ void build_max_heap(int n)
 	for(i = non; i >= 0; i--) max_heapify(i, n);
 }
 
+void heapsort(int n)
+{
+	int i, temp, m;
+	// First, make the array a max-heap
+	build_max_heap(n);
+	
+	m = n - 1;
+	for (i = m; i > 0; i--)
+	{
+		// swap a[1] with a[i], thus putting the largest element at the end of the array
+		temp = h[0];
+		h[0] = h[i];
+		h[i] = temp;
+		// max-heapify the changed array uptil one before the last child
+		max_heapify(0, --n);		
+	}
+}
