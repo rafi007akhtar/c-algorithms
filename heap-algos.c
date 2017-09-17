@@ -1,7 +1,12 @@
-/* This program is my first on heap sort. More algorithms to come in due time */
+/**
+ * Complete set of heap algorithms, including heap_sort, implemented in C as prescribed in the syllabus of the subject CS501 
+ * This program has been tried and tested on standard inputs. It may contain bugs. Please report to the author in case of any bugs.
+ * Repository link: https://github.com/rafi007akhtar/c-algorithms
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 
 // in-line functions
 #define left(i) (2*i + 1) // get the index of the left child of a node
@@ -16,12 +21,15 @@ void max_heapify_alter(int,int); // max-heapify the heap using loop
 void min_heapify(int,int); // min-heapify the heap using recursion
 void build_max_heap(int); // build the max-heap from bottom up
 void heapsort(int); // apply the heapsort process to sort the array
+int extract_max(int); // take out the maximum element from the heap, and return the new heapsize
+void increase_key(int,int); // update the value of the heap in the position given to a larger number
+int insert_key(int,int); // insert key inside the heap, and return the new heapsize
 
 int *h; // create a global heap variable
 
 int main()
 {
-	int i, n, ch;
+	int i, n, ch, key, pos;
 	
 	// create a heap array
 	printf("Enter the size of the heap: ");
@@ -37,7 +45,7 @@ int main()
 	// enter the menu
 	while(1)
 	{
-		printf("\nEnter what you want\n1. See the heap \n2. Max-Heapify it \n3. Min-Heapify it \n4. Build the entire heap \n5. Apply heapsort on the array \n-1. Exit \nEnter choice: ");
+		printf("\nEnter what you want\n1. See the heap \n2. Max-Heapify it \n3. Min-Heapify it \n4. Build the entire heap \n5. Apply heapsort on the array \n6. Extract the maximum element from the heap \n7. Update a key to a higher value \n8. Insert a new value in the heap \n-1. Exit \nEnter choice: ");
 		scanf("%d", &ch);
 		if(ch == -1) break;
 		switch(ch)
@@ -67,6 +75,25 @@ int main()
 			case 5:
 				heapsort(n);
 				printf("Heap sorted\n");
+				break;
+			
+			case 6:
+				n = extract_max(n);
+				printf("Maximum element extracted\n");
+				break;
+			
+			case 7:
+				printf("Enter the position and the key to be inserted there: ");
+				scanf("%d %d", &pos, &key); // user assumes 1-indexed
+				increase_key(--pos, key);
+				printf("Key inserted\n");
+				break;
+			
+			case 8:
+				printf("Enter the value you want to insert: ");
+				scanf("%d", &key);
+				n = insert_key(key, n);
+				printf("Key inserted\n");
 				break;
 				
 			default:
@@ -180,11 +207,56 @@ void heapsort(int n)
 	m = n - 1;
 	for (i = m; i > 0; i--)
 	{
-		// swap a[1] with a[i], thus putting the largest element at the end of the array
+		// swap h[0] with h[i], thus putting the largest element at the end of the array
 		temp = h[0];
 		h[0] = h[i];
 		h[i] = temp;
 		// max-heapify the changed array uptil one before the last child
 		max_heapify(0, --n);		
 	}
+}
+
+int extract_max(int n)
+{
+	int temp;
+	// first, swap the max element (h[0]) with the last leaf (h[n-1])
+	temp = h[0];
+	h[0] = h[n - 1];
+	h[n - 1] = temp;
+	
+	// now decrease the heapsize by 1 and max-heapify it
+	max_heapify(0, --n);
+	
+	// finally, return the new size to the calling function
+	return n;
+}
+
+void increase_key(int pos, int key)
+{
+	int temp;
+	// first off, put the key in the position specified
+	h[pos] = key;
+	
+	// make sure this value does not exceed its parent's value
+	while(h[pos] > h[parent(pos)])
+	{
+		// swap this value with its parent
+		temp = h[pos];
+		h[pos] = h[parent(pos)];
+		h[parent(pos)] = temp;
+		
+		pos = parent(pos);
+	}
+}
+
+int insert_key(int key, int n)
+{
+	// increase the heapsize by 1
+	n++;
+	h = (int *) realloc(h, n * sizeof(int));
+	
+	h[n-1] = INT_MAX; // put infinity sentinel at the end of the heap
+	increase_key(n-1, key);
+	
+	return n; // return the new heapsize
 }
