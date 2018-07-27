@@ -16,11 +16,12 @@ int *x; // solution to the backtracking problem (NQueens)
 
 int main()
 {
-	int n;
+	int n, loop;
 	printf("Enter the value of N: ");
 	scanf("%d", &n);
 	
 	x = (int *)malloc(n * sizeof(int));
+	printf("The solution is:\n");
 	nqueens(0, n);
 	
 	return 0;
@@ -53,7 +54,7 @@ void nqueens(int k, int n)
 			{
 				for (j = 0; j < n; j++) 
 					printf("%d ", x[j]);
-				//exit(0);
+				exit(0);
 				printf("\n");
 			}
 			else nqueens(k+1, n);
