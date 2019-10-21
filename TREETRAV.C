@@ -1,6 +1,20 @@
 /*
-input the data
-output will be the data arranged according to the traversals
+A sample input and output is given below as:-
+Enter the number of elements :: 8
+56
+44
+89
+12
+78
+100
+23
+67
+Inorder
+12 23 44 56 67 78 89 100
+Preorder
+56 44 12 23 89 78 67 100
+Postorder
+23 12 44 67 78 100 89 56
 */
 
 #include<stdio.h>
