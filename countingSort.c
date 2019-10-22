@@ -1,6 +1,6 @@
 /*
-    input: a unsorted array
-    output: a sorted array using Counting Sort algorithm.
+    input: a unsorted array => countingSort(unsorted,sorted,size) unsorted[5] = {3,2,1,5,4}
+    output: a sorted array using Counting Sort algorithm. sorted[5] = {1,2,3,4,5}
 */
 
 #include <stdio.h>
